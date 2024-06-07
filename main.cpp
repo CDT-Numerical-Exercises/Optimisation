@@ -10,19 +10,11 @@ constexpr double quadratic(const double x, const double a, const double b, const
   return a*x*x + b*x + c;
 }
 
-int main() {
+void problem_2_1_2() {
   constexpr double stepsize = 0.05;
   constexpr double start = 1.0;
   constexpr double end = 2.0;
   constexpr size_t required_size = (end-start)/stepsize + 1;
-
-  // 2.1.1 is trivial, skipping
-
-  ///////////
-  // 2.1.2 //
-  ///////////
-
-  {
   
   std::cout << "Problem 2.1.2" << std::endl;
   
@@ -50,14 +42,9 @@ int main() {
 
   std::cout << std::endl;
 
-  }
+}
 
-  ///////////
-  // 2.1.3 //
-  ///////////
-
-  {
-
+void problem_2_1_3() {
   Gnuplot gp;
   gp << "plot '-' title '2x^2 + 3x + 4' with linespoints\n";
   // send the data to gnuplot manually.  I could put it into an array
@@ -67,13 +54,9 @@ int main() {
     gp << x << " " << quadratic(x, 2, 3, 4) << "\n";
   }
 
-  }
+}
 
-  ///////////
-  // 2.1.4 //
-  ///////////
-
-  {
+void problem_2_1_4() {
 
   std::cout << "Problem 2.1.4" << std::endl;
 
@@ -105,13 +88,9 @@ int main() {
   gsl_vector_free(b);
   gsl_vector_free(a);
   
-  }
+}
 
-  ///////////
-  // 2.1.5 //
-  ///////////
-
-  {
+void problem_2_1_5() {
 
   std::cout << std::endl << "Problem 2.1.5" << std::endl;
 
@@ -127,13 +106,9 @@ int main() {
 
   gsl_matrix_free(A);
 
-  }
+}
 
-  ///////////
-  // 2.1.6 //
-  ///////////
-
-  {
+void problem_2_1_6() {
 
   std::cout << std::endl << "Problem 2.1.6" << std::endl;
 
@@ -171,9 +146,9 @@ int main() {
   gsl_matrix_set(A, max_loc[0], max_loc[1], min);
   print_matrix(A, 3);
 
-  }
+}
 
-  {
+void problem_2_1_7() {
     
   std::cout << std::endl << "Problem 2.1.7" << std::endl;
 
@@ -197,7 +172,16 @@ int main() {
   std::cout << "V: " << std::endl;
   print_matrix(V);
   
-  }
+}
+
+int main() {
+  // 2.1.1 is trivial, skipping
+  problem_2_1_2();
+  problem_2_1_3();
+  problem_2_1_4();
+  problem_2_1_5();
+  problem_2_1_6();
+  problem_2_1_7();
 
   return 0;
 }
