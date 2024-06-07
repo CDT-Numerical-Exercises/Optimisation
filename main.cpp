@@ -4,51 +4,7 @@
 #include <gsl/gsl_matrix.h>
 #include <gnuplot-iostream/gnuplot-iostream.h>
 
-// use bounds checking to make sure this doesn't go badly.
-// GSL's bounds checking should be good.
-void gsl_vector_arange(gsl_vector *a, double start, double end, double step=1.0) {
-  double v = start;
-  size_t i = 0;
-  while (v <= end) {
-    gsl_vector_set(a, i, v);
-    v += step;
-    ++i;
-  }
-}
-
-void gsl_vector_linspace(gsl_vector *a, double start, double end,
-                         bool endpoint = true) {
-  size_t n = a->size;
-  double stepsize;
-  if (endpoint) stepsize = (end-start)/(n-1); else stepsize = (end-start)/n;
-
-  double v = start;
-  for (size_t i = 0; i < n; i++) {
-    gsl_vector_set(a, i, v);
-    v += stepsize;
-  }
-}
-
-void print_vector(const gsl_vector *a, const int width = 0) {
-  std::cout << "[ ";
-  for (int i = 0; i < a->size; ++i) {
-    std::cout << std::setw(width) << gsl_vector_get(a, i) << " ";
-  }
-  std::cout << "]" << std::endl;
-}
-
-void print_matrix(const gsl_matrix *A, const int width = 0) {
-  for (int i = 0; i < A->size1; ++i) {
-    for (int j = 0; j < A->size2; ++j) {
-      std::cout << std::setw(width) << gsl_matrix_get(A, i, j) << " ";
-    }
-    std::cout << std::endl;
-  }
-}
-
-void print_matrix(const gsl_matrix_view &A, const int width = 0) {
-  print_matrix(&A.matrix, width);
-}
+#include "helpers.h"
 
 constexpr double quadratic(const double x, const double a, const double b, const double c) {
   return a*x*x + b*x + c;
@@ -78,12 +34,7 @@ int main() {
   
   gsl_vector *a = gsl_vector_calloc(required_size);
   gsl_vector_linspace(a, start, end);
-
-  std::cout << "[ ";
-  for (int i = 0; i < a->size; ++i) {
-    std::cout << gsl_vector_get(a, i) << " ";
-  }
-  std::cout << "]" << std::endl;
+  print_vector(a);
   gsl_vector_free(a);
 
   /*
@@ -94,12 +45,7 @@ int main() {
 
   a = gsl_vector_calloc(required_size);
   gsl_vector_arange(a, start, end+stepsize, stepsize);
-
-  std::cout << "[ ";
-  for (int i = 0; i < a->size; ++i) {
-    std::cout << gsl_vector_get(a, i) << " ";
-  }
-  std::cout << "]" << std::endl;
+  print_vector(a);
   gsl_vector_free(a);
 
   std::cout << std::endl;
