@@ -4,6 +4,7 @@
 #include <gsl/gsl_vector.h>
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_blas.h>
+#include <gsl/gsl_statistics_double.h>
 #include <gnuplot-iostream/gnuplot-iostream.h>
 
 #include "helpers.h"
@@ -288,6 +289,54 @@ void problem_2_1_10() {
   gsl_matrix_free(y2);
 }
 
+void setup_histogram(Gnuplot &gp, double min, double max, int n, double fill_opacity = 0.0) {
+  // script for histogram based on https://stackoverflow.com/a/19596160
+  gp << "Min = " << std::fixed << min << "\n" // make sure Min and Max are floats, else the width will be broken
+    "Max = " << std::fixed << max << "\n"
+    "n = " << n << "\n"
+    "width = (Max-Min)/n # binwidth\n"
+    "bin(x) = width*(floor((x-Min)/width)+0.5) + Min\n"
+    "set boxwidth width\n"
+    "set xr [Min:Max]\n"
+    "set style fill solid " << std::fixed << fill_opacity << "\n";
+}
+
+void problem_2_1_11() {
+
+  std::cout << std::endl << "Problem 2.1.11" << std::endl;
+
+  constexpr size_t N = 500000;
+  constexpr size_t P = 5;
+
+  gsl_matrix *M = gsl_matrix_alloc(N, P);
+  for (size_t i = 0; i < M->size1; ++i) {
+    for (size_t j = 0; j < M->size2; ++j) {
+      gsl_matrix_set(M, i, j, norm<double>(0, 1));
+    }
+  }
+
+  std::cout << "Matrix created!" << std::endl;
+
+  Gnuplot gp;
+  
+  double means[N];
+  double vars[N];
+  for (size_t i = 0; i < M->size1; ++i) {
+    gsl_vector_view v = gsl_matrix_row(M, i);
+    means[i] = gsl_stats_mean(v.vector.data, v.vector.stride, v.vector.size);
+    vars[i] = gsl_stats_variance(v.vector.data, v.vector.stride, v.vector.size);
+  }
+
+  gp << "set multiplot layout 2, 1\n";
+  setup_histogram(gp, -2.5, 2.5, 11, 0.5);
+  gp << "plot" << gp.file1d(means) << "using (bin($1)):(1.0) smooth freq with boxes lc rgb'red' title 'mean'\n";
+  setup_histogram(gp, 0, 5, 11, 0.5);
+  gp << "plot" << gp.file1d(vars) << "using (bin($1)):(1.0) smooth freq with boxes lc rgb'green' title 'variance'\n";
+  gp << "unset multiplot\n";
+
+  gsl_matrix_free(M);
+}
+
 int main() {
   // 2.1.1 is trivial, skipping
   problem_2_1_2();
@@ -299,6 +348,7 @@ int main() {
   problem_2_1_8();
   problem_2_1_9();
   problem_2_1_10();
+  problem_2_1_11();
 
   return 0;
 }
