@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstdlib>
+#include <cmath>
 #include <gsl/gsl_vector.h>
 #include <gsl/gsl_matrix.h>
 #include <gnuplot-iostream/gnuplot-iostream.h>
@@ -162,8 +163,12 @@ void problem_2_1_7() {
     gsl_vector *v = vs[i];
     for (size_t j = 0; j < v->size; ++j) {
       // you asked for any real numbers!
-      uint32_t x = rand();
-      gsl_vector_set(v, j, *(float*)(&x));
+      float f;
+      do {
+        uint32_t x = rand();
+        f = *(float *)(&x);
+      } while (!std::isfinite(f));
+      gsl_vector_set(v, j, f);
     }
     std::cout << "v" << i+1 << ": ";
     print_vector(v);
