@@ -163,13 +163,7 @@ void problem_2_1_7() {
   for (size_t i = 0; i < 2; ++i) {
     gsl_vector *v = vs[i];
     for (size_t j = 0; j < v->size; ++j) {
-      // you asked for any real numbers!
-      union { float f; uint32_t x; };
-      do {
-        x = randint<uint32_t>(0, 4294967295);
-      }
-      while (!std::isfinite(f));
-      gsl_vector_set(v, j, f);
+      gsl_vector_set(v, j, any_random_real());
     }
     std::cout << "v" << i+1 << ": ";
     print_vector(v);
@@ -190,8 +184,7 @@ void problem_2_1_8() {
   // fill with numbers between 0 and 1
   for (size_t i = 0; i < M->size1; ++i) {
     for (size_t j = 0; j < M->size2; ++j) {
-      double r = (double)randint<uint64_t>(0, UINT64_MAX) / (double)UINT64_MAX;
-      gsl_matrix_set(M, i, j, r);
+      gsl_matrix_set(M, i, j, randreal<double>(0, 1));
     }
   }
 

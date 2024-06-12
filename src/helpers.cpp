@@ -56,3 +56,11 @@ void print_matrix(const gsl_matrix *A, const int width) {
 void print_matrix(const gsl_matrix_view &A, const int width) {
   print_matrix(&A.matrix, width);
 }
+
+double any_random_real() {
+  union { double f; uint64_t x; };
+  do {
+    x = randint<uint64_t>(0, UINT64_MAX);
+  } while (!std::isfinite(f));
+  return f;
+}

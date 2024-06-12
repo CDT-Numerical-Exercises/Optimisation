@@ -23,7 +23,7 @@ extern std::default_random_engine generator;
 }
 
 template <typename T> T randint(const T min, const T max) {
-  std::uniform_int_distribution<T> distribution(min,max);
+  std::uniform_int_distribution<T> distribution(min, max);
   return distribution(helpers_rng::generator);
 }
 
@@ -31,5 +31,16 @@ template int randint<int>(const int, const int);
 template long randint<long>(const long, const long);
 template uint32_t randint<uint32_t>(const uint32_t, const uint32_t);
 template uint64_t randint<uint64_t>(const uint64_t, const uint64_t);
+
+template <typename T> T randreal(const T min, const T max) {
+  std::uniform_real_distribution<T> distribution(min, max);
+  return distribution(helpers_rng::generator);
+}
+
+template float randreal(const float, const float);
+template double randreal(const double, const double);
+
+// returns any number in (-inf, inf)
+double any_random_real();
 
 #endif
