@@ -179,6 +179,39 @@ void problem_2_1_7() {
   
 }
 
+void problem_2_1_8() {
+
+  std::cout << std::endl << "Problem 2.1.8" << std::endl;
+
+  gsl_matrix *M = gsl_matrix_alloc(3, 4);
+
+  // fill with numbers between 0 and 1
+  for (size_t i = 0; i < M->size1; ++i) {
+    for (size_t j = 0; j < M->size2; ++j) {
+      double r = (double)rand() / (double)RAND_MAX;
+      gsl_matrix_set(M, i, j, r);
+    }
+  }
+
+  std::cout << "M: " << std::endl;
+  print_matrix(M);
+
+  gsl_vector_view a[M->size1];
+  for (size_t i = 0; i < M->size1; ++i) {
+    a[i] = gsl_matrix_row(M, i);
+    std::cout << "a" << i << ": ";
+    print_vector(a[i]);
+  }
+
+  gsl_matrix_view B1 = gsl_matrix_submatrix(M, 0, 0, 3, 2);
+  std::cout << "B1: " << std::endl;
+  print_matrix(B1);
+
+  gsl_matrix_view B2 = gsl_matrix_submatrix(M, 0, 2, 3, 2);
+  std::cout << "B2: " << std::endl;
+  print_matrix(B2);
+}
+
 int main() {
   // 2.1.1 is trivial, skipping
   problem_2_1_2();
@@ -187,6 +220,7 @@ int main() {
   problem_2_1_5();
   problem_2_1_6();
   problem_2_1_7();
+  problem_2_1_8();
 
   return 0;
 }
