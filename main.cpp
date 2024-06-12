@@ -147,6 +147,7 @@ void problem_2_1_6() {
   gsl_matrix_set(A, max_loc[0], max_loc[1], min);
   print_matrix(A, 3);
 
+  gsl_matrix_free(A);
 }
 
 void problem_2_1_7() {
@@ -176,7 +177,8 @@ void problem_2_1_7() {
 
   std::cout << "V: " << std::endl;
   print_matrix(V);
-  
+
+  gsl_matrix_free(V);
 }
 
 void problem_2_1_8() {
@@ -206,10 +208,13 @@ void problem_2_1_8() {
   gsl_matrix_view B1 = gsl_matrix_submatrix(M, 0, 0, 3, 2);
   std::cout << "B1: " << std::endl;
   print_matrix(B1);
+  std::cout << std::endl;
 
   gsl_matrix_view B2 = gsl_matrix_submatrix(M, 0, 2, 3, 2);
   std::cout << "B2: " << std::endl;
   print_matrix(B2);
+
+  gsl_matrix_free(M);
 }
 
 int main() {
