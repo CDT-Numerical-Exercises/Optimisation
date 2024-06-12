@@ -68,7 +68,7 @@ void problem_2_1_4() {
   // use the Fisher–Yates algorithm to shuffle the vector
   for (int N = a->size; N > 1; --N) {
     // swap the Nth element with the kth element
-    int k = randint(0, N);
+    int k = randint(0, N-1);
     gsl_vector_swap_elements(a, N-1, k);
   }
 
@@ -114,9 +114,9 @@ void problem_2_1_6() {
   std::cout << std::endl << "Problem 2.1.6" << std::endl;
 
   gsl_matrix *A = gsl_matrix_alloc(5,5);
-  for (int i = 0; i < A->size1; ++i) {
-    for (int j = 0; j < A->size2; ++j) {
-      gsl_matrix_set(A, i, j, 101 + randint(0, 100));
+  for (size_t i = 0; i < A->size1; ++i) {
+    for (size_t j = 0; j < A->size2; ++j) {
+      gsl_matrix_set(A, i, j, 101 + randint(0, 99));
     }
   }
   print_matrix(A, 3);
@@ -166,7 +166,7 @@ void problem_2_1_7() {
       // you asked for any real numbers!
       union { float f; uint32_t x; };
       do {
-        x = randint(0, 4294967296);
+        x = randint<uint32_t>(0, 4294967295);
       }
       while (!std::isfinite(f));
       gsl_vector_set(v, j, f);
@@ -190,7 +190,7 @@ void problem_2_1_8() {
   // fill with numbers between 0 and 1
   for (size_t i = 0; i < M->size1; ++i) {
     for (size_t j = 0; j < M->size2; ++j) {
-      double r = (double)randint(0, (int64_t)RAND_MAX+1) / (double)RAND_MAX;
+      double r = (double)randint<uint64_t>(0, UINT64_MAX) / (double)UINT64_MAX;
       gsl_matrix_set(M, i, j, r);
     }
   }

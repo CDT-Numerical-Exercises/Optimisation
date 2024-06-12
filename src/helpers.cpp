@@ -1,6 +1,9 @@
 #include <iostream>
 #include <iomanip>
+#include <random>
 #include "helpers.h"
+
+std::default_random_engine generator;
 
 // use bounds checking to make sure this doesn't go badly.
 // GSL's bounds checking should be good.
@@ -50,8 +53,4 @@ void print_matrix(const gsl_matrix *A, const int width) {
 
 void print_matrix(const gsl_matrix_view &A, const int width) {
   print_matrix(&A.matrix, width);
-}
-
-int64_t randint(const int64_t min, const int64_t max) {
-  return min + (rand() % (max - min));
 }
