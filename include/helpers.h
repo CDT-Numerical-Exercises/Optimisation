@@ -40,6 +40,14 @@ template <typename T> T randreal(const T min, const T max) {
 template float randreal(const float, const float);
 template double randreal(const double, const double);
 
+template <typename T> T norm(const T mu, const T sigma) {
+  std::normal_distribution<T> distribution(mu, sigma);
+  return distribution(helpers_rng::generator);
+}
+
+template float norm(const float, const float);
+template double norm(const double, const double);
+
 // returns any number in (-inf, inf)
 double any_random_real();
 
