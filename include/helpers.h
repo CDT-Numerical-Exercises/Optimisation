@@ -1,6 +1,8 @@
 #ifndef HELPERS_H
 #define HELPERS_H 1
 
+#include <cinttypes>
+
 #include <gsl/gsl_vector.h>
 #include <gsl/gsl_matrix.h>
 
@@ -14,5 +16,10 @@ void print_vector(const gsl_vector_view &a, const int width = 0);
 
 void print_matrix(const gsl_matrix *A, const int width = 0);
 void print_matrix(const gsl_matrix_view &A, const int width = 0);
+
+// generate a random integer in [min, max)
+int64_t randint(const int64_t min, const int64_t max);
+
+
 
 #endif

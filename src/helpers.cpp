@@ -51,3 +51,7 @@ void print_matrix(const gsl_matrix *A, const int width) {
 void print_matrix(const gsl_matrix_view &A, const int width) {
   print_matrix(&A.matrix, width);
 }
+
+int64_t randint(const int64_t min, const int64_t max) {
+  return min + (rand() % (max - min));
+}
