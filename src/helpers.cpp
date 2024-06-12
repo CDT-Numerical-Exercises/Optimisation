@@ -3,7 +3,9 @@
 #include <random>
 #include "helpers.h"
 
+namespace helpers_rng {
 std::default_random_engine generator;
+}
 
 // use bounds checking to make sure this doesn't go badly.
 // GSL's bounds checking should be good.

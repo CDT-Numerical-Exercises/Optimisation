@@ -18,11 +18,13 @@ void print_vector(const gsl_vector_view &a, const int width = 0);
 void print_matrix(const gsl_matrix *A, const int width = 0);
 void print_matrix(const gsl_matrix_view &A, const int width = 0);
 
-
+namespace helpers_rng {
 extern std::default_random_engine generator;
+}
+
 template <typename T> T randint(const T min, const T max) {
   std::uniform_int_distribution<T> distribution(min,max);
-  return distribution(generator);
+  return distribution(helpers_rng::generator);
 }
 
 template int randint<int>(const int, const int);
