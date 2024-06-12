@@ -35,6 +35,10 @@ void print_vector(const gsl_vector *a, const int width) {
   std::cout << "]" << std::endl;
 }
 
+void print_vector(const gsl_vector_view &a, const int width) {
+  print_vector(&a.vector, width);
+}
+
 void print_matrix(const gsl_matrix *A, const int width) {
   for (int i = 0; i < A->size1; ++i) {
     for (int j = 0; j < A->size2; ++j) {
