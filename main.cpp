@@ -163,11 +163,11 @@ void problem_2_1_7() {
     gsl_vector *v = vs[i];
     for (size_t j = 0; j < v->size; ++j) {
       // you asked for any real numbers!
-      float f;
+      union { float f; uint32_t x; };
       do {
-        uint32_t x = rand();
-        f = *(float *)(&x);
-      } while (!std::isfinite(f));
+        x = rand();
+      }
+      while (!std::isfinite(f));
       gsl_vector_set(v, j, f);
     }
     std::cout << "v" << i+1 << ": ";
