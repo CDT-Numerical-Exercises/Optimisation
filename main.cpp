@@ -3,6 +3,7 @@
 #include <cmath>
 #include <gsl/gsl_vector.h>
 #include <gsl/gsl_matrix.h>
+#include <gsl/gsl_blas.h>
 #include <gnuplot-iostream/gnuplot-iostream.h>
 
 #include "helpers.h"
@@ -210,6 +211,83 @@ void problem_2_1_8() {
   gsl_matrix_free(M);
 }
 
+void problem_2_1_9() {
+
+  std::cout << std::endl << "Problem 2.1.9" << std::endl;
+
+  size_t N = randint(5, 9);
+  std::cout << "N = " << N << std::endl;
+  gsl_matrix *M = gsl_matrix_alloc(3, N);
+
+  for (size_t i = 0; i < M->size1; ++i) {
+    for (size_t j = 0; j < M->size2; ++j) {
+      gsl_matrix_set(M, i, j, norm<double>(0, 1));
+    }
+  }
+
+  std::cout << "M: " << std::endl;
+  print_matrix(M);
+  std::cout << std::endl;
+
+  gsl_vector_view v = gsl_matrix_column(M, N-2);
+  std::cout << "v: ";
+  print_vector(v);
+
+  gsl_matrix_free(M);
+}
+
+void problem_2_1_10() {
+  std::cout << std::endl << "Problem 2.1.10" << std::endl;
+
+  gsl_matrix *A = gsl_matrix_alloc(4, 3);
+  for (size_t i = 0; i < A->size1; ++i) {
+    for (size_t j = 0; j < A->size2; ++j) {
+      gsl_matrix_set(A, i, j, randint<int>(1, 9));
+    }
+  }
+  std::cout << "A: " << std::endl;
+  print_matrix(A);
+
+  // if we create the vector data as an array, we can easily use the
+  // same storage for both.
+  //
+  // an alternative would be to create the column vector as a matrix
+  // first, then get a vector view into it via
+  // gsl_matrix_column. However, one advantage of allocating the
+  // vector this way is that it exists solely on the stack (rather
+  // than heap) and does not need to be freed (so no memory leaks).
+  double b_arr[4];
+  for (size_t j = 0; j < 4; ++j) {
+    b_arr[j] = randint<int>(1, 9);
+  }
+  gsl_vector_view b = gsl_vector_view_array(b_arr, 4);
+  std::cout << "b: ";
+  print_vector(b);
+
+  gsl_vector *y1 = gsl_vector_calloc(3);
+
+  // using Level 2 BLAS (matrix-vector)
+  //   for all intents and purposes, the vector acts like a column matrix
+  //   gemv then does A @ x
+  gsl_blas_dgemv(CblasTrans, 1, A, &b.vector, 0, y1);
+  std::cout << "y1: ";
+  print_vector(y1);
+  std::cout << "Dims: " << y1->size << "x1" << std::endl;
+
+  // using Level 3 BLAS (matrix-matrix, treating the vector as a column matrix)
+  //   here, we then get gemm to do B^T @ A
+  gsl_matrix *y2 = gsl_matrix_calloc(1, 3);
+  gsl_matrix_view B = gsl_matrix_view_array(b_arr, 4, 1);
+  gsl_blas_dgemm(CblasTrans, CblasNoTrans, 1, &B.matrix, A, 0, y2);
+  std::cout << "y2: ";
+  print_matrix(y2);
+  std::cout << "Dims: " << y2->size1 << "x" << y2->size2 << std::endl;
+
+  gsl_matrix_free(A);
+  gsl_vector_free(y1);
+  gsl_matrix_free(y2);
+}
+
 int main() {
   // 2.1.1 is trivial, skipping
   problem_2_1_2();
@@ -219,6 +297,8 @@ int main() {
   problem_2_1_6();
   problem_2_1_7();
   problem_2_1_8();
+  problem_2_1_9();
+  problem_2_1_10();
 
   return 0;
 }
