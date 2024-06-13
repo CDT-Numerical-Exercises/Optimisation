@@ -324,7 +324,7 @@ void problem_2_1_11() {
   for (size_t i = 0; i < M->size1; ++i) {
     gsl_vector_view v = gsl_matrix_row(M, i);
     means[i] = gsl_stats_mean(v.vector.data, v.vector.stride, v.vector.size);
-    vars[i] = gsl_stats_variance(v.vector.data, v.vector.stride, v.vector.size);
+    vars[i] = gsl_stats_variance_m(v.vector.data, v.vector.stride, v.vector.size, means[i]); // use the pre-calculated mean instead of recalculating
   }
 
   gp << "set multiplot layout 2, 1\n";
