@@ -1,11 +1,13 @@
 #include <iostream>
 #include <cstdlib>
+#define _USE_MATH_DEFINES
 #include <cmath>
 #include <vector>
 #include <gsl/gsl_vector.h>
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_blas.h>
 #include <gsl/gsl_statistics_double.h>
+#include <gsl/gsl_randist.h>
 #include <gnuplot-iostream/gnuplot-iostream.h>
 
 #include "helpers.h"
@@ -396,6 +398,75 @@ void problem_2_1_12() {
   std::cout << std::endl;
 }
 
+void problem_2_1_13() {
+  std::cout << std::endl << "Problem 2.1.13" << std::endl;
+
+  constexpr double r = 1;
+  constexpr double cx = 1;
+  constexpr double cy = 1;
+
+  Gnuplot gp;
+  gp << "set size ratio -1\n";
+  gp << "set yr [" << std::fixed << cy - r << ":" << std::fixed << cy + r << "]\n";
+  gp << "set xr [" << std::fixed << cx - r << ":" << std::fixed << cx + r << "]\n";
+  gp << "set object 1 circle at " << std::fixed << cx << "," << std::fixed << cy << " size first " << std::fixed << r << " fc rgb'purple'\n";
+  gp << "set style fill solid 0.5\n";
+  gp << "plot '-' using 1:2 with filledcurves\n";
+
+  double x0;
+  double y0;
+  for (size_t i = 0; i < 3; ++i) {
+    const double theta = randreal(0., 2 * M_PI);
+    const double x = cx + r*std::cos(theta);
+    const double y = cy + r*std::sin(theta);
+    gp << std::fixed << x << " " << std::fixed << y << "\n";
+    if (i == 0) {
+      x0 = x;
+      y0 = y;
+    }
+  }
+  gp << std::fixed << x0 << " " << std::fixed << y0 << "\n";
+}
+
+int coin_toss_experiment(const int N) {
+  int heads = 0;
+  for (int i = 0; i < N; ++i) {
+    heads += randint(0,1);
+  }
+  return heads;
+}
+
+void problem_2_1_14() {
+  std::cout << std::endl << "Problem 2.1.14" << std::endl;
+  
+  Gnuplot gp;
+
+  constexpr int N = 10000;
+  constexpr int M = 100;
+
+  constexpr double ax_min = 4800;
+  constexpr double ax_max = 5200;
+  constexpr int n_bins = 25;
+  constexpr int pdf_samples = 1000;
+
+  constexpr double binwidth = (ax_max-ax_min)/(double)n_bins;
+
+  setup_histogram(gp, ax_min, ax_max, n_bins, 0.5);
+  gp << "plot '-' using (bin($1)):(1.0/" << std::fixed << (double)M * binwidth << ") smooth freq with boxes lc rgb'green' title '', '' using 1:2 w lines title 'Gaussian PDF'\n";
+  for (int i = 0; i < M; ++i) {
+    gp << coin_toss_experiment(N) << "\n";
+  }
+  gp << "e\n"; // indicates end of first data file
+
+  constexpr double mu = (double)N/2;
+  const double sigma = std::sqrt((double)N/4);
+  for (int i = 0; i < pdf_samples; ++i) {
+    double x = ax_min + (double)i*(ax_max - ax_min)/(double)pdf_samples;
+    gp << std::fixed << x << " " << std::fixed << gsl_ran_gaussian_pdf(x - mu, sigma) << "\n";
+  }
+  gp << "e\n";
+}
+
 int main() {
   // 2.1.1 is trivial, skipping
   problem_2_1_2();
@@ -409,6 +480,8 @@ int main() {
   problem_2_1_10();
   problem_2_1_11();
   problem_2_1_12();
+  problem_2_1_13();
+  problem_2_1_14();
 
   return 0;
 }
