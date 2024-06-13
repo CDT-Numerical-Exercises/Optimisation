@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <cmath>
+#include <vector>
 #include <gsl/gsl_vector.h>
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_blas.h>
@@ -337,6 +338,64 @@ void problem_2_1_11() {
   gsl_matrix_free(M);
 }
 
+void problem_2_1_12() {
+  std::cout << std::endl << "Problem 2.1.12" << std::endl;
+
+  constexpr size_t num_ints = 1000;
+  constexpr int min_num = 0;
+  constexpr int max_num = 100;
+  constexpr size_t num_bins = (max_num - min_num + 1);
+
+  uint bins[num_bins] = {0};
+  int L[num_ints]; // likely 4kB. Should be fine to hold in stack
+  for (size_t i = 0; i < num_ints; ++i) {
+    const int x = randint(min_num, max_num);
+    L[i] = x;
+    ++bins[min_num+x];
+  }
+
+  uint biggest_count = 0;
+  int mode1 = -1;
+  uint second_biggest_count = 0;
+  int mode2 = -1; // = p
+  for (size_t i = 0; i < num_bins; ++i) {
+    if (bins[i] > second_biggest_count) {
+      if (bins[i] > biggest_count) { // i.e. second_biggest_count < biggest_count < bins[i]
+        second_biggest_count = biggest_count;
+        mode2 = mode1;
+        biggest_count = bins[i];
+        mode1 = i + min_num;
+      } else { // i.e. second_biggest_count < bins[i] < biggest_count
+        second_biggest_count = bins[i];
+        mode2 = i + min_num;
+      }
+    }
+  }
+
+  std::cout << "Biggest number: " << mode1 << " (" << biggest_count << " instances)" << std::endl;
+  std::cout << " Second number: " << mode2 << " (" << second_biggest_count << " instances)" << std::endl;
+
+  std::vector<int> Lltp(0);
+  std::vector<int> Lgtep(0);
+
+  for (size_t i = 0; i < num_ints; ++i) {
+    const int x = L[i];
+    if (x < mode2) Lltp.push_back(x);
+    else Lgtep.push_back(x);
+  }
+
+  // print the vectors
+  std::cout << "Less than p: ";
+  for (int x : Lltp) {
+    std::cout << x << " ";
+  }
+  std::cout << std::endl << "Gte p: ";
+  for (int x : Lgtep) {
+    std::cout << x << " ";
+  }
+  std::cout << std::endl;
+}
+
 int main() {
   // 2.1.1 is trivial, skipping
   problem_2_1_2();
@@ -349,6 +408,7 @@ int main() {
   problem_2_1_9();
   problem_2_1_10();
   problem_2_1_11();
+  problem_2_1_12();
 
   return 0;
 }
