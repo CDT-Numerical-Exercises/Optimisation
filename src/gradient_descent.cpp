@@ -39,7 +39,7 @@ iter_t gradient_descent(gsl_vector *x0, gradf_function gradf, learning_rate_func
     gsl_vector_memcpy(x_prev, x0);
 
     // determine lambda for this iteration
-    lambda = lambda_n(n);
+    lambda = lambda_n(n, x0);
 
     // determine the gradient for the current x0
     gradf(x0, grad);

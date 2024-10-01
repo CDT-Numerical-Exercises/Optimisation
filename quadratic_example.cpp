@@ -17,7 +17,7 @@ void gradf(gsl_vector *x, gsl_vector *grad) {
 }
 
 // constant
-double lambda_n(iter_t n) {
+double lambda_n(iter_t n, gsl_vector *x) {
   return 0.1;
 }
 
