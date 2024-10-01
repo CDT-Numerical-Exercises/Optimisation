@@ -6,6 +6,7 @@
 
 #include <gsl/gsl_vector.h>
 #include <gsl/gsl_matrix.h>
+#include <gsl/gsl_blas.h>
 
 void gsl_vector_arange(gsl_vector *a, const double start, const double end, const double step=1.0);
 
@@ -50,5 +51,9 @@ template double norm(const double, const double);
 
 // returns any number in (-inf, inf)
 double any_random_real();
+
+inline double gsl_vector_length(const gsl_vector *v) {
+  return gsl_blas_dnrm2(v);
+}
 
 #endif
