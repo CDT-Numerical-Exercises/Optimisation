@@ -27,6 +27,7 @@ file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.h)
 # add executable
 add_executable(quadratic_example quadratic_example.cpp ${sources} ${headers})
 add_executable(problem1 problem1.cpp ${sources} ${headers})
+add_executable(problem2 problem2.cpp ${sources} ${headers})
 
 # add libraries
 find_package(GSL REQUIRED)
@@ -39,3 +40,4 @@ find_package(Boost 1.71.0 COMPONENTS iostreams system filesystem)
 include_directories(${Boost_INCLUDE_DIRS})
 target_link_libraries(quadratic_example GSL::gsl GSL::gslcblas ${Boost_LIBRARIES})
 target_link_libraries(problem1 GSL::gsl GSL::gslcblas ${Boost_LIBRARIES})
+target_link_libraries(problem2 GSL::gsl GSL::gslcblas ${Boost_LIBRARIES})
