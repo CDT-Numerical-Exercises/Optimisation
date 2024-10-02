@@ -22,7 +22,7 @@ const double b_arr[2] = {0, 1};
 const gsl_matrix_const_view A_view = gsl_matrix_const_view_array(A_arr, 2, 2);
 const gsl_vector_const_view b_view = gsl_vector_const_view_array(b_arr, 2);
 
-void gradf(gsl_vector *x, gsl_vector *grad) {
+void gradf(const gsl_vector *x, gsl_vector *grad) {
   gsl_blas_dgemv(CblasNoTrans, 1, &A_view.matrix, x, 0, grad);
   gsl_blas_daxpy(-1, &b_view.vector, grad);
 }

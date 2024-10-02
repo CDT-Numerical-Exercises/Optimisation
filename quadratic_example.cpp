@@ -10,7 +10,7 @@
 
 #include "gradient_descent.h"
 
-void gradf(gsl_vector *x, gsl_vector *grad) {
+void gradf(const gsl_vector *x, gsl_vector *grad) {
   // use y = x**2 + 1
   // gradient is just 2x
   gsl_vector_set(grad, 0, 2*gsl_vector_get(x, 0));
