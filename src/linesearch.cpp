@@ -75,6 +75,10 @@ double backtracking_linesearch(const gsl_vector *x, function f, gradf_function g
     #endif
   } while (diff > alpha*t);
 
+  gsl_vector_free(p);
+  gsl_vector_free(grad);
+  gsl_vector_free(xp);
+
   return alpha;
 }
 
