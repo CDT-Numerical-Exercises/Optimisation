@@ -14,13 +14,35 @@
 void get_search_direction(const gsl_vector *x, gradf_function gradf, gsl_vector *p, gsl_vector *grad) {
   gradf(x, p);
   gsl_vector_memcpy(grad, p);
-  double length = gsl_blas_dnrm2(p);
-  gsl_vector_scale(p, -1./length);
+
+  // some sources (e.g. [1, 3]) suggest using the unit vector grad as
+  // the search direction, i.e. -∇f/|∇f|. However, to apply this to
+  // gradient descent, it only makes sense to use p = -∇f (as
+  // suggested in [4]).
+  //
+  // The reason for this is as follows: the gradient descent algorithm
+  // finds the minimum by stepping to x' = x - λ∇f on each
+  // iteration. The linesearch algorithm is essentially testing values
+  // of α in order to find one where x' = x + αp will produce an
+  // efficient descent according to the Armijo rule. If we let p =
+  // -∇f, then α directly corresponds to λ, and we can feed it back
+  // into the gradient descent algorithm. If we use a different p,
+  // such as p = -∇f/|∇f|, the linesearch algorithm will still find a
+  // suitable step size, but it will be specific to this search
+  // vector.
+  //
+  // The unit vector version can be used when the linesearch algorithm
+  // forms the basis of the minimisation; that is, we iteratively
+  // minimise the function by setting x' = x + αp, where p does not
+  // necessarily equal -∇f. This algorithm is effectively the same as
+  // gradient descent, but allows for a different choice of descent
+  // direction in order to improve the efficiency of the algorithm
+  // [1]. To reiterate, however, for α to be valid as the step size in
+  // standard gradient descent, the choice of p = -∇f is required.
+  gsl_vector_scale(p, -1.);
 }
 
-// implemented based on descriptions of the algorithm found at:
-//  - https://optimization.cbe.cornell.edu/index.php?title=Line_search_methods#Backtracking_Line_Search
-//  - https://en.wikipedia.org/wiki/Backtracking_line_search#Algorithm
+// implemented based on descriptions of the algorithm found at [1], [2]
 double backtracking_linesearch(const gsl_vector *x, function f, gradf_function gradf, const double alpha0, const double tau, const double c) {
   gsl_vector *p = gsl_vector_alloc(x->size);
   gsl_vector *grad = gsl_vector_alloc(x->size);
@@ -46,8 +68,18 @@ double backtracking_linesearch(const gsl_vector *x, function f, gradf_function g
 
     diff = fxp - fx;
     newalpha = tau*alpha;
-    std::cout << "alpha: " << alpha << ", diff: " << diff << std::endl;
+    std::cout << "alpha: " << alpha << ", diff: " << diff << ", alpha*t: " << alpha*t << std::endl;
   } while (diff > alpha*t);
 
   return alpha;
 }
+
+/*
+  References
+
+[1] https://optimization.cbe.cornell.edu/index.php?title=Line_search_methods
+[2] https://en.wikipedia.org/wiki/Backtracking_line_search#Algorithm
+[3] https://sites.math.washington.edu/~burke/crs/516/notes/backtracking.pdf
+[4] https://en.wikipedia.org/wiki/Wolfe_conditions
+
+*/

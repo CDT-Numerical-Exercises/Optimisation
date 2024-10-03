@@ -12,13 +12,8 @@
 #include "linesearch.h"
 
 constexpr double alpha0 = 0.5;
-constexpr double tau = 0.75;
-// not sure if I've made a mistake with my implementation. c should be
-// very small (typically 1e-3), but I only see the algorithm converge
-// when using c close to 1
-// Is this just one of the limitations of using only the Armijo
-// condition without the curvature condition?
-constexpr double c = 0.9;
+constexpr double tau = 0.5;
+constexpr double c = 1e-3;
 
 double f(const gsl_vector *X) {
   const double x = gsl_vector_get(X, 0);
@@ -49,7 +44,7 @@ int main() {
 
   std::vector<std::vector<double>> path;
 
-  iter_t steps = gradient_descent(x0, gradf, lambda_n, &path, 1e-6, 100000);
+  iter_t steps = gradient_descent(x0, gradf, lambda_n, &path, 1e-10, 100000);
 
   std::cout << "Gradient descent finished in " << steps << " steps." << std::endl;
 
