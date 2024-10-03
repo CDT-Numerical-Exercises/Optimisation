@@ -5,7 +5,9 @@
 #include "helpers.h"
 #include "gradient_descent.h"
 #include "linesearch.h"
+#ifdef VERBOSE_LINESEARCH
 #include <iostream>
+#endif
 
 // returns the search direction in vector p. p should be
 // pre-allocated, and should be the same size as x.
@@ -68,7 +70,9 @@ double backtracking_linesearch(const gsl_vector *x, function f, gradf_function g
 
     diff = fxp - fx;
     newalpha = tau*alpha;
+    #ifdef VERBOSE_LINESEARCH
     std::cout << "alpha: " << alpha << ", diff: " << diff << ", alpha*t: " << alpha*t << std::endl;
+    #endif
   } while (diff > alpha*t);
 
   return alpha;

@@ -14,6 +14,11 @@ endif()
 
 add_compile_definitions(HAVE_INLINE=1)
 
+OPTION (VERBOSE_LINESEARCH "Print during iterations of the linesearch algorithm (mostly for debugging purposes)" OFF)
+IF(VERBOSE_LINESEARCH)
+  add_compile_definitions(VERBOSE_LINESEARCH=1)
+ENDIF()
+
 # add include dir
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
