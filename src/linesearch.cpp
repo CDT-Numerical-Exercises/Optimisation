@@ -18,6 +18,9 @@ void get_search_direction(const gsl_vector *x, gradf_function gradf, gsl_vector 
   gsl_vector_scale(p, -1./length);
 }
 
+// implemented based on descriptions of the algorithm found at:
+//  - https://optimization.cbe.cornell.edu/index.php?title=Line_search_methods#Backtracking_Line_Search
+//  - https://en.wikipedia.org/wiki/Backtracking_line_search#Algorithm
 double backtracking_linesearch(const gsl_vector *x, function f, gradf_function gradf, const double alpha0, const double tau, const double c) {
   gsl_vector *p = gsl_vector_alloc(x->size);
   gsl_vector *grad = gsl_vector_alloc(x->size);

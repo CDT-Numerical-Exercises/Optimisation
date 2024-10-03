@@ -13,6 +13,11 @@
 
 constexpr double alpha0 = 0.5;
 constexpr double tau = 0.75;
+// not sure if I've made a mistake with my implementation. c should be
+// very small (typically 1e-3), but I only see the algorithm converge
+// when using c close to 1
+// Is this just one of the limitations of using only the Armijo
+// condition without the curvature condition?
 constexpr double c = 0.9;
 
 double f(const gsl_vector *X) {
