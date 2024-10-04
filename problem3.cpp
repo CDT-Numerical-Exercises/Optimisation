@@ -14,6 +14,8 @@
 
 // precision to print the output to
 constexpr int output_precision = 10;
+// calculate to at least one decimal place more precision than we output
+const double calculation_precision = pow(10, -(output_precision+2));
 
 constexpr double alpha0 = 0.5;
 constexpr double tau = 0.5;
@@ -77,7 +79,7 @@ int main() {
       // ensure the path is empty
       path.clear();
 
-      iter_t steps = gradient_descent(x0, gradf, lambda_n, &path, 1e-10, 100);
+      iter_t steps = gradient_descent(x0, gradf, lambda_n, &path, calculation_precision, 100);
 
       // std::cout << "Gradient descent finished in " << steps << " steps."
       //           << std::endl;
