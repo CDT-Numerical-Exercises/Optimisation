@@ -64,6 +64,7 @@ int main() {
   std::cout << "Found minima: (x,y) = (" << gsl_vector_get(x0, 0) << "," << gsl_vector_get(x0, 1) << ")" << std::endl;
 
   Gnuplot gp;
+  gp << "set offsets graph 0.05, 0.05, 0.05, 0.05\n";
   gp << "plot '-' with linespoints\n";
   for (int i = 0; i < path.size(); ++i) {
     std::vector<double> X = path[i];
