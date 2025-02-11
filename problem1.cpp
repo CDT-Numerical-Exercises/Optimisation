@@ -51,25 +51,30 @@ double lambda_n(iter_t n, gsl_vector *x) {
   return numerator / *denominator;
 }
 
-int main() {
-  gsl_vector *x0 = gsl_vector_alloc(2);
-  gsl_vector_set_all(x0, 1);
-
+void do_and_plot_descent(Gnuplot &gp, gsl_vector *x0) {
   std::vector<std::vector<double>> path;
-
   iter_t steps = gradient_descent(x0, gradf, lambda_n, &path, 1e-10, 10000);
-
+  
   std::cout << "Gradient descent finished in " << steps << " steps." << std::endl;
-
   std::cout << "Found minima: (x,y) = (" << gsl_vector_get(x0, 0) << "," << gsl_vector_get(x0, 1) << ")" << std::endl;
 
-  Gnuplot gp;
-  gp << "set offsets graph 0.05, 0.05, 0.05, 0.05\n";
-  gp << "plot '-' with linespoints\n";
   for (int i = 0; i < path.size(); ++i) {
     std::vector<double> X = path[i];
     gp << X[0] << " " << X[1] << "\n";
   }
+  gp << "e\n";
+}
+
+int main() {
+  Gnuplot gp;
+  gp << "set offsets graph 0.05, 0.05, 0.05, 0.05\n";
+  gp << "plot '-' with linespoints, '-' with linespoints\n";
+  
+  gsl_vector *x0 = gsl_vector_alloc(2);
+  gsl_vector_set_all(x0, 1);
+  do_and_plot_descent(gp, x0);
+  gsl_vector_set_all(x0, -1);
+  do_and_plot_descent(gp, x0);
 
   gsl_vector_free(x0);
 }
