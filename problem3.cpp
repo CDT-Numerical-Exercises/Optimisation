@@ -53,6 +53,41 @@ constexpr int TOTAL_TRIALS = TRIALS_X * TRIALS_Y;
 constexpr double STEPSIZE_X = (X_RANGE[1]-X_RANGE[0])/(TRIALS_X-1);
 constexpr double STEPSIZE_Y = (Y_RANGE[1]-Y_RANGE[0])/(TRIALS_Y-1);
 
+// cherry picked to produce a good plot
+void generate_contours() {
+  // constexpr double XMIN = X_RANGE[0];
+  constexpr double XMIN = -2;
+  constexpr double XMAX = X_RANGE[1];
+  constexpr double YMIN = Y_RANGE[0];
+  constexpr double YMAX = Y_RANGE[1];
+  constexpr double XSTEP = 0.05;
+  constexpr double YSTEP = 0.05;
+  constexpr int XPOINTS = (XMAX - XMIN)/XSTEP;
+  constexpr int YPOINTS = (YMAX - YMIN)/YSTEP;
+  Gnuplot gp;
+  gp << "set dgrid3d " << XPOINTS << "," << YPOINTS << " gauss\n";
+  gp << "set contour base\n";
+  gp << "set cntrparam linear\n";
+  gp << "set cntrparam levels incremental -1.9, 1.5, 25\n";
+  gp << "set table 'contours.dat'\n";
+  gp << "splot '-' u 1:2:3 with lines nosurface\n";
+
+  double X[2];
+  gsl_vector_view x0_view = gsl_vector_view_array(X, 2);
+  gsl_vector *x0 = &x0_view.vector;
+
+  double &x = X[0];
+  double &y = X[1];
+  for (y = YMIN; y <= YMAX; y += YSTEP) {
+    for (x = XMIN; x <= XMAX; x += XSTEP) {
+      const double z = f(x0);
+      // print_vector(x0);
+      gp << x << " " << y << " " << z << "\n";
+    }
+  }
+  gp << "e\n";
+}
+
 int main() {
   double x0_arr[2] = {X_RANGE[0], Y_RANGE[0]};
   double &X = x0_arr[0];
@@ -107,12 +142,15 @@ int main() {
             << best_minimum_coords[1] << ") = " << best_minimum << std::endl;
   std::cout << std::setprecision(default_precision);
 
+  generate_contours();
   Gnuplot gp;
   // gp << "set xrange [" << X_RANGE[0] << ":" << X_RANGE[1] << "]\n";
   // gp << "set yrange [" << Y_RANGE[0] << ":" << Y_RANGE[1] << "]\n";
-  gp << "plot '-' with linespoints\n";
+  gp << "set key off\n";
+  gp << "plot for [level=1:*] 'contours.dat' index level with lines, '-' with linespoints\n";
   for (int i = 0; i < best_path.size(); ++i) {
     std::vector<double> x = best_path[i];
     gp << x[0] << " " << x[1] << "\n";
   }
+  gp << "e\n";
 }
