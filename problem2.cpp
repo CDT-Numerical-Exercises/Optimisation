@@ -68,16 +68,23 @@ void get_point_on_circle(double &x0, double &y0, const double r=1, const double 
 }
 
 void generate_contours() {
+  constexpr double XMIN = -1;
+  constexpr double XMAX = 1;
+  constexpr double YMIN = -1;
+  constexpr double YMAX = 1;
+  constexpr double XSTEP = 0.05;
+  constexpr double YSTEP = 0.05;
+  constexpr int XPOINTS = (XMAX - XMIN)/XSTEP;
+  constexpr int YPOINTS = (YMAX - YMIN)/YSTEP;
   Gnuplot gp;
-  gp << "set dgrid3d 40,40 gauss\n";
+  gp << "set dgrid3d " << XPOINTS << "," << YPOINTS << " gauss\n";
   gp << "set contour base\n";
   gp << "set cntrparam linear\n";
   gp << "set cntrparam levels 10\n";
   gp << "set table 'contours.dat'\n";
   gp << "splot '-' u 1:2:3 with lines nosurface\n";
-  for (double y = -1; y <= 1; y += 0.05) {
-    for (double x = -1; x <= 1; x += 0.05) {
-      if (x == 0 && y == 0) continue; // skip the pole
+  for (double y = YMIN; y <= YMAX; y += YSTEP) {
+    for (double x = XMIN; x <= XMAX; x += XSTEP) {
       const double z = f(x, y);
       gp << x << " " << y << " " << z << "\n";
     }
