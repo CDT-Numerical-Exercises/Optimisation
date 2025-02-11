@@ -65,16 +65,34 @@ void do_and_plot_descent(Gnuplot &gp, gsl_vector *x0) {
   gp << "e\n";
 }
 
-int main() {
-  Gnuplot gp;
-  gp << "set offsets graph 0.05, 0.05, 0.05, 0.05\n";
-  gp << "plot '-' with linespoints, '-' with linespoints\n";
-  
-  gsl_vector *x0 = gsl_vector_alloc(2);
-  gsl_vector_set_all(x0, 1);
-  do_and_plot_descent(gp, x0);
-  gsl_vector_set_all(x0, -1);
-  do_and_plot_descent(gp, x0);
+void get_point_on_circle(double &x0, double &y0, const double r=1, const double cx=0, const double cy=0) {
+  const double theta = randreal(0., 2 * M_PI);
+  x0 = cx + r*std::cos(theta);
+  y0 = cy + r*std::sin(theta);
+}
 
-  gsl_vector_free(x0);
+constexpr int N_DESCENTS = 3;
+
+
+double X[2];
+
+int main() {
+  // seed the RNG
+  helpers_rng::generator.seed(0xC0FFEE);
+  
+  Gnuplot gp;
+  gp << "set key off\n";
+  gp << "set offsets graph 0.01, graph 0.01, graph 0.01, graph 0.01\n";
+  gp << "plot ";
+  for (int i = 1; i < N_DESCENTS; ++i) {
+    gp << "'-' with linespoints, ";
+  }
+  gp << "'-' with linespoints\n ";
+
+  gsl_vector_view x0_view = gsl_vector_view_array(X, 2);
+  gsl_vector *x0 = &x0_view.vector;
+  for (int i = 0; i < N_DESCENTS; ++i) {
+    get_point_on_circle(X[0], X[1]);
+    do_and_plot_descent(gp, x0);
+  }
 }
