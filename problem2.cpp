@@ -7,6 +7,7 @@
 #include <gsl/gsl_blas.h>
 #include <gnuplot-iostream/gnuplot-iostream.h>
 #include "helpers.h"
+#include "magma_palette.h"
 
 #include "gradient_descent.h"
 
@@ -104,7 +105,9 @@ int main() {
   Gnuplot gp;
   generate_contours();
   gp << "set key off\n";
-  gp << "plot for [level=1:*] 'contours.dat' index level with lines, ";
+  add_magma_palette(gp);
+  gp << "unset colorbox\n";
+  gp << "plot for [level=1:*] 'contours.dat' index level with lines linecolor palette, ";
   for (int i = 1; i < N_DESCENTS; ++i) {
     gp << "'-' with linespoints, ";
   }

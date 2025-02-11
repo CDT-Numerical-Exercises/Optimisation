@@ -11,6 +11,7 @@
 
 #include "gradient_descent.h"
 #include "linesearch.h"
+#include "magma_palette.h"
 
 // precision to print the output to
 constexpr int output_precision = 10;
@@ -144,10 +145,10 @@ int main() {
 
   generate_contours();
   Gnuplot gp;
-  // gp << "set xrange [" << X_RANGE[0] << ":" << X_RANGE[1] << "]\n";
-  // gp << "set yrange [" << Y_RANGE[0] << ":" << Y_RANGE[1] << "]\n";
   gp << "set key off\n";
-  gp << "plot for [level=1:*] 'contours.dat' index level with lines, '-' with linespoints\n";
+  add_magma_palette(gp);
+  gp << "unset colorbox\n";
+  gp << "plot for [level=1:*] 'contours.dat' index level with lines linecolor palette, '-' with linespoints\n";
   for (int i = 0; i < best_path.size(); ++i) {
     std::vector<double> x = best_path[i];
     gp << x[0] << " " << x[1] << "\n";
