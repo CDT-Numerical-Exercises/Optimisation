@@ -38,6 +38,10 @@ void gradf(const gsl_vector *x, gsl_vector *grad) {
   gsl_blas_dgemv(CblasNoTrans, 1.0/denominator, &A_sum_view.matrix, x, 0, grad);
 }
 
+constexpr double f(const double x, const double y) {
+  return std::log(x*x + y*(x + y));
+}
+
 // constant
 double lambda_n(iter_t n, gsl_vector *x) {
   return 0.1;
@@ -63,6 +67,24 @@ void get_point_on_circle(double &x0, double &y0, const double r=1, const double 
   y0 = cy + r*std::sin(theta);
 }
 
+void generate_contours() {
+  Gnuplot gp;
+  gp << "set dgrid3d 40,40 gauss\n";
+  gp << "set contour base\n";
+  gp << "set cntrparam linear\n";
+  gp << "set cntrparam levels 10\n";
+  gp << "set table 'contours.dat'\n";
+  gp << "splot '-' u 1:2:3 with lines nosurface\n";
+  for (double y = -1; y <= 1; y += 0.05) {
+    for (double x = -1; x <= 1; x += 0.05) {
+      if (x == 0 && y == 0) continue; // skip the pole
+      const double z = f(x, y);
+      gp << x << " " << y << " " << z << "\n";
+    }
+  }
+  gp << "e\n";
+}
+
 constexpr int N_DESCENTS = 4;
 
 
@@ -71,11 +93,11 @@ double X[2];
 int main() {
   compute_A_sum();
   helpers_rng::generator.seed(0xC0FFEE);
-
+  
   Gnuplot gp;
+  generate_contours();
   gp << "set key off\n";
-  gp << "set offsets graph 0.01, graph 0.01, graph 0.01, graph 0.01\n";
-  gp << "plot ";
+  gp << "plot for [level=1:*] 'contours.dat' index level with lines, ";
   for (int i = 1; i < N_DESCENTS; ++i) {
     gp << "'-' with linespoints, ";
   }
@@ -84,6 +106,8 @@ int main() {
   gsl_vector_view x0_view = gsl_vector_view_array(X, 2);
   gsl_vector *x0 = &x0_view.vector;
 
+  
+  
   gsl_vector_set_all(x0, 1);
   do_and_plot_descent(gp, x0);
   
